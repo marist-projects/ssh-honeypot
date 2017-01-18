@@ -2,7 +2,13 @@
 
 ## Installation & Configuration
 - [ ] Pre-Install Commands
+	- [ ] Login to your machine as root
 	- [ ] STARTING_DIRECTORY=$(pwd)
+	- [ ] vi /etc/ssh/sshd_config
+	- [ ] Change the port that the machine is currently using to an dynamic port (48000, 48001, 48002, etc.)
+	- [ ] service ssh restart
+	- [ ] Be sure that the change went through by attempting to ssh into your machine with that port
+		- [ ] Be sure to forward ports 22, 2222, and whatever port you changed ssh to in the step above 
 - [ ] Install Dependencies
 	- [ ] apt-get update
 	- [ ] apt-get install wget make zlib1g-dev libssl-dev policycoreutils
