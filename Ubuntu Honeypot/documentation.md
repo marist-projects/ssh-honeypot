@@ -1,0 +1,55 @@
+# Simple SSH-Honeypot
+
+## Installation & Configuration
+- [ ] Pre-Install Commands
+	- [ ] STARTING_DIRECTORY=$(pwd)
+- [ ] Install Dependencies
+	- [ ] apt-get update
+	- [ ] apt-get install wget make zlib1g-dev libssl-dev policycoreutils
+- [ ] Setting Up Directory Structure
+	- [ ] mkdir -p /usr/local/source/openssh
+	- [ ] mkdir /usr/local/source/openssh/openssh-22
+	- [ ] mkdir /usr/local/source/openssh/openssh-2222
+	- [ ] mkdir /var/log/ssh-honeypot
+	- [ ] touch /var/log/ssh-honeypot/install-22.log
+	- [ ] touch /var/log/ssh-honeypot/install-2222.log
+- [ ] Configure Tailored OpenSSH on Port 22
+	- [ ] wget -P /usr/local/source/openssh/openssh-22 ftp://ftp4.usa.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-7.2p1.tar.gz >> "/var/log/ssh-honeypot/install-22.log"
+	- [ ] cd /usr/local/source/openssh/openssh-22
+	- [ ] tar -xf /usr/local/source/openssh/openssh-22/openssh-7.2p1.tar.gz >> "/var/log/ssh-honeypot/install-22.log"
+	- [ ] mv /usr/local/source/openssh/openssh-22/openssh-7.2p1 /usr/local/source/openssh/openssh-22/openssh-7.2p1-22
+	- [ ] mv /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/auth-passwd.c /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/auth-passwd.c.orig
+	- [ ] mv /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/sshd.c /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/sshd.c.orig
+	- [ ] mv /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/auth2-pubkey.c /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/auth2-pubkey.c.orig
+	- [ ] cp ${STARTING_DIRECTORY}/build/auth-passwd.c /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/auth-passwd.c
+	- [ ] cp ${STARTING_DIRECTORY}/build/sshd.c /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/sshd.c
+	- [ ] cp ${STARTING_DIRECTORY}/build/auth2-pubkey.c /usr/local/source/openssh/openssh-22/openssh-7.2p1-22/auth2-pubkey.c
+	- [ ] cp ${STARTING_DIRECTORY}/build/sshd_config-22 /usr/local/etc/sshd_config-22
+	- [ ] cd /usr/local/source/openssh/openssh-22/openssh-7.2p1-22
+	- [ ] ./configure >> "/var/log/ssh-honeypot/install-22.log"
+	- [ ] make >> "/var/log/ssh-honeypot/install-22.log"
+	- [ ] make install >> "/var/log/ssh-honeypot/install-22.log"
+	- [ ] cp sshd /usr/local/sbin/sshd-22
+	- [ ] chmod a+rx sshd /usr/local/sbin/sshd-22
+- [ ] Configure Tailored OpenSSH on Port 2222
+	- [ ] wget -P /usr/local/source/openssh/openssh-2222 ftp://ftp4.usa.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-7.2p1.tar.gz >> "/var/log/ssh-honeypot/install-2222.log"
+	- [ ] cd /usr/local/source/openssh/openssh-2222
+	- [ ] tar -xf /usr/local/source/openssh/openssh-2222/openssh-7.2p1.tar.gz >> "/var/log/ssh-honeypot/install-2222.log"
+	- [ ] mv /usr/local/source/openssh/openssh-2222/openssh-7.2p1 /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222
+	- [ ] mv /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/auth-passwd.c /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/auth-passwd.c.orig
+	- [ ] mv /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/sshd.c /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/sshd.c.orig
+	- [ ] mv /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/auth2-pubkey.c /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/auth2-pubkey.c.orig
+	- [ ] cp ${STARTING_DIRECTORY}/build/auth-passwd-2222.c /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/auth-passwd.c
+	- [ ] cp ${STARTING_DIRECTORY}/build/sshd.c /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/sshd.c
+	- [ ] cp ${STARTING_DIRECTORY}/build/auth2-pubkey-2222.c /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222/auth2-pubkey.c
+	- [ ] cp ${STARTING_DIRECTORY}/build/sshd_config-2222 /usr/local/etc/sshd_config-2222
+	- [ ] cd /usr/local/source/openssh/openssh-2222/openssh-7.2p1-2222
+	- [ ] ./configure >> "/var/log/ssh-honeypot/install-2222.log"
+	- [ ] make >> "/var/log/ssh-honeypot/install-2222.log"
+	- [ ] cp sshd /usr/local/sbin/sshd-2222
+	- [ ] chmod a+rx sshd /usr/local/sbin/sshd-2222
+- [ ] Finalize Configuration
+	- [ ] echo "/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22 " >> /etc/rc.local
+	- [ ] echo "/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222 " >> /etc/rc.local
+	- [ ] /usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22
+	- [ ] /usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222
