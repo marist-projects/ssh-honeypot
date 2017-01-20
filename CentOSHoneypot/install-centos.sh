@@ -129,11 +129,21 @@ function configure_ssh_2222 {
 
 # Finalizing configurations
 function finalize_configuration {
-	# Finalizing Modifications
+	echo "#!/bin/sh -e" > /etc/rc.local
+	echo "#" >> /etc/rc.local
+	echo "# rc.local" >> /etc/rc.local
+	echo "#" >> /etc/rc.local
+	echo "# This script is executed at the end of each multiuser runlevel." >> /etc/rc.local
+	echo "# Make sure that the script will 'exit 0' on success or any other" >> /etc/rc.local
+	echo "# value on error." >> /etc/rc.local
+	echo "#" >> /etc/rc.local
+	echo "# In order to enable or disable this script just change the execution" >> /etc/rc.local
+	echo "# bits." >> /etc/rc.local
+	echo "#" >> /etc/rc.local
+	echo "# By default this script does nothing." >> /etc/rc.local
 	echo "/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22 " >> /etc/rc.local
 	echo "/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222 " >> /etc/rc.local
-
-
+	echo "exit 0" >> /etc/rc.local
 	/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22
 	/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222
 
