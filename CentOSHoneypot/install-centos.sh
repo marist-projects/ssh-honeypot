@@ -136,7 +136,10 @@ function finalize_configuration {
 
 	/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22
 	/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222
-	
+
+	semanage port -a -t ssh_port_t -p tcp 2222
+	semanage port -a -t ssh_port_t -p tcp 48000	
+
 	cd $STARTING_DIRECTORY
 }
 
