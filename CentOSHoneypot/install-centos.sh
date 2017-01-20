@@ -94,8 +94,8 @@ function configure_ssh_22 {
 	./configure >> "${LOG_DIR}/install-22.log"
 	make >> "${LOG_DIR}/install-22.log"
 	make install >> "${LOG_DIR}/install-22.log"
-	cp sshd /usr/sbin/sshd-22
-	chmod a+rx sshd /usr/sbin/sshd-22
+	cp sshd /usr/local/sbin/sshd-22
+	chmod a+rx sshd /usr/local/sbin/sshd-22
 }
 
 # Function to tailor OpenSSH 2222
@@ -123,8 +123,8 @@ function configure_ssh_2222 {
 	cd ${MOD_SSH_2222_DIR}/openssh-7.2p1-2222
 	./configure >> "${LOG_DIR}/install-2222.log"
 	make >> "${LOG_DIR}/install-2222.log"
-	cp sshd /usr/sbin/sshd-2222
-	chmod a+rx sshd /usr/sbin/sshd-2222
+	cp sshd /usr/local/sbin/sshd-2222
+	chmod a+rx sshd /usr/local/sbin/sshd-2222
 }
 
 # Finalizing configurations
@@ -134,8 +134,8 @@ function finalize_configuration {
 	echo "/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222 " >> /etc/rc.local
 
 
-	/usr/sbin/sshd-22 -f /usr/local/etc/sshd_config-22
-	/usr/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222
+	/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22
+	/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222
 	
 	cd $STARTING_DIRECTORY
 }
