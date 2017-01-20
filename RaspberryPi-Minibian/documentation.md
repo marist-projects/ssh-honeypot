@@ -19,13 +19,13 @@
 			- [ ] Type "w" for writing the changes
 			- [ ] Reboot
 			- [ ] resize2fs /dev/mmcblk0p2
-	- [ ] Download Soucr Files
+	- [ ] Download Source Files
 		- [ ] apt-get install git
 		- [ ] git clone https://github.com/marist-projects/ssh-honeypot.git
 - [ ] Install Instructions
-	- [ ] Navigate to the install script called install-miniban.sh
-	- [ ] chmod +x install-miniban.sh
-	- [ ] ./install-miniban.sh
+	- [ ] Navigate to the install script called install-minibian.sh
+	- [ ] chmod +x install-minibian.sh
+	- [ ] ./install-minibian.sh
 	
 ## Manual Install
 - [ ] Pre-Install Commands

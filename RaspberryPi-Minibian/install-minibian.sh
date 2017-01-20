@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################################
-#                         MARIST SSH HONEYPOT UBUNTU INSTALL SCRIPT v0.1                        #
+#                         MARIST SSH HONEYPOT MINIBAN INSTALL SCRIPT v0.1                       #
 #                             MARIST COLLEGE NETWORKING DEPARTMENT                              #
 #################################################################################################
 
