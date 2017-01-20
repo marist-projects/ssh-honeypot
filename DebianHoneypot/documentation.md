@@ -5,27 +5,13 @@
 ## Automatic Install
 - [ ] Pre-Install Commands
 	- [ ] apt-get update && apt-get upgrade
-	- [ ] Resize SD card 
-		- [ ] https://www.youtube.com/watch?v=R4VovMDnsIE - watch this and follow first half
-		- [ ] Rough Instruction for my SD Card
-			- [ ] fdisk -uc /dev/mmcblk0
-			- [ ] Type "d" for delete
-			- [ ] Type "2" for the partition
-			- [ ] Type "n" for new partition
-			- [ ] Type "p" for primary
-			- [ ] Type "2" for partition
-			- [ ] Type where ever the last partition left off, in my case it is 125056
-			- [ ] Hit "enter" for default which is the max of the SD card
-			- [ ] Type "w" for writing the changes
-			- [ ] Reboot
-			- [ ] resize2fs /dev/mmcblk0p2
 	- [ ] Download Soucr Files
 		- [ ] apt-get install git
 		- [ ] git clone https://github.com/marist-projects/ssh-honeypot.git
 - [ ] Install Instructions
-	- [ ] Navigate to the install script called install-miniban.sh
-	- [ ] chmod +x install-miniban.sh
-	- [ ] ./install-miniban.sh
+	- [ ] Navigate to the install script called install-debian.sh
+	- [ ] chmod +x install-debian.sh
+	- [ ] ./install-debian.sh
 	
 ## Manual Install
 - [ ] Pre-Install Commands
