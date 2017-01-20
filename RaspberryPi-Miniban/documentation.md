@@ -19,7 +19,7 @@
 			- [ ] Type "w" for writing the changes
 			- [ ] Reboot
 			- [ ] resize2fs /dev/mmcblk0p2
-	- [ ] Download Soucr Files
+	    - [ ] Download Soucr Files
 			- [ ] apt-get install git
 			- [ ] git clone https://github.com/marist-projects/ssh-honeypot.git
 - [ ] Install Instructions
