@@ -8,7 +8,7 @@
 
 ####################################### Global Variables ########################################
 
-STARTING_DIRECTORY=$(pwd)
+STARTING_DIRECTORY=$(pwd)/..
 echo $STARTING_DIRECTORY
 CURRENT_SSH_PORT=$(grep -Eo 'Port *[0-9]+' /etc/ssh/sshd_config | grep -o '[0-9]*')
 MOD_SSH_DIR=
@@ -50,7 +50,8 @@ function display_intro {
 function install_dependencies {
 	echo "Installing dependencies..."
 	apt-get update &> /dev/null
-	apt-get install wget make zlib1g-dev libssl-dev policycoreutils &> /dev/null
+	apt-get groupinstall ‘Development Tools’
+	apt-get install wget zlib zlib-devel openssl-devel libssh-devel &> /dev/null
 }
 
 # Create directory structure
