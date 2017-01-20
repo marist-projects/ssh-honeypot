@@ -49,9 +49,9 @@ function display_intro {
 # Install dependencies 
 function install_dependencies {
 	echo "Installing dependencies..."
-	apt-get update &> /dev/null
-	apt-get groupinstall ‘Development Tools’
-	apt-get install wget zlib zlib-devel openssl-devel libssh-devel &> /dev/null
+	yum update
+	yum groupinstall ‘Development Tools’
+	yum install wget zlib zlib-devel openssl-devel libssh-devel
 }
 
 # Create directory structure
