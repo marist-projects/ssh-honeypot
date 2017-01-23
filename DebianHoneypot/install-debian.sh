@@ -167,6 +167,12 @@ do
 	sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	CURRENT_SSH_PORT=$SSH_PORT
 	
+	echo -n "Specify a syslog/management server[blank for none]:"
+	read SYSLOG_SERV
+	sed -i '/#$ModLoad .*/ c\$ModLoad imtcp' /etc/rsyslog.conf
+	sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
+	echo "*.* @@${SYSLOG_SERV}:514" > /etc/rsyslog.d/00-honeypot.conf
+
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
 		service ssh restart

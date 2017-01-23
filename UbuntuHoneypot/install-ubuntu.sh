@@ -16,6 +16,7 @@ MOD_SSH_22_DIR=
 MOD_SSH_2222_DIR=
 IS_RUNNING=true
 LOG_DIR=
+SYSLOG_SERV=
 
 # ASCII Art Variables  
 RED='\e[0;31m'
@@ -149,6 +150,11 @@ function finalize_configuration {
 	cd $STARTING_DIRECTORY
 }
 
+# Point to Syslog/Management Server
+function point_syslog {
+	
+}
+
 #################################################################################################
 
 # Check if user is root
@@ -166,6 +172,11 @@ do
 	read SSH_PORT
 	sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	CURRENT_SSH_PORT=$SSH_PORT
+	
+	read SYSLOG_SERV
+	sed -i '/#$ModLoad .*/ c\$ModLoad imtcp' /etc/rsyslog.conf
+	sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
+	echo "*.* @@${SYSLOG_SERV}:514" > /etc/rsyslog.d/00-honeypot.conf
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
