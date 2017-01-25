@@ -157,11 +157,11 @@ function configure_rsyslog {
 	echo "Configuring RSYSLOG..."
 	
 	# Check Inputs
-	if [ -z "$2" ]
+	if [ -z $2 ]
 	then
 		$2="1"
 	fi
-	if [ -z "$1" ]
+	if [ -z $1 ]
 	then
 		$1=""
 	else
