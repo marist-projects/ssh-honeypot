@@ -175,7 +175,7 @@ function configure_rsyslog {
 		echo "\$ActionQueueType LinkedList" >> /etc/rsyslog.conf
 		echo "\$ActionResumeRetryCount -1" >> /etc/rsyslog.conf
 		echo "#HONEYPOT CONFIGURATION END" >> /etc/rsyslog.conf
-		echo "*.* @@${1}:514" > /etc/rsyslog.d/00-honeypot.conf
+		echo "*.* @@${1}:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
 		service rsyslog restart
 	fi
 }
