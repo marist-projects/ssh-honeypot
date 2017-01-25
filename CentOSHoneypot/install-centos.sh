@@ -153,6 +153,36 @@ function finalize_configuration {
 	cd $STARTING_DIRECTORY
 }
 
+# Configure RSYSLOG
+function configure_rsyslog {
+	#SYSLOG = $1
+	#DISK_SPACE = $2
+	
+	echo "Configuring RSYSLOG..."
+	
+	# Check Inputs
+	if [ -z $2 ]
+	then
+		$2="1"
+	fi
+	
+	if [[ $1 && $2 ]]
+	then
+		sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
+		sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
+		echo "#HONEYPOT CONFIGURATION START" >> /etc/rsyslog.conf
+		echo "\$WorkDirectory /var/lib/rsyslog" >> /etc/rsyslog.conf
+		echo "\$ActionQueueFileName fwdRule1" >> /etc/rsyslog.conf
+		echo "\$ActionQueueMaxDiskSpace ${2}g" >> /etc/rsyslog.conf
+		echo "\$ActionQueueSaveOnShutdown on" >> /etc/rsyslog.conf
+		echo "\$ActionQueueType LinkedList" >> /etc/rsyslog.conf
+		echo "\$ActionResumeRetryCount -1" >> /etc/rsyslog.conf
+		echo "#HONEYPOT CONFIGURATION END" >> /etc/rsyslog.conf
+		echo "*.* @@${1}:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
+		service rsyslog restart
+	fi
+}
+
 #################################################################################################
 
 # Check if user is root
@@ -166,15 +196,16 @@ fi
 display_intro
 while [ $IS_RUNNING ]
 do
-	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
+	echo -n "Please specify the port that SSH should be changed to [we recommend 48000-65535]:"
 	read SSH_PORT
 	sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	CURRENT_SSH_PORT=$SSH_PORT
-
+	
+	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none]:"
 	read SYSLOG_SERV
-	sed -i '/#$ModLoad .*/ c\$ModLoad imtcp' /etc/rsyslog.conf
-	sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
-	echo "*.* @@${SYSLOG_SERV}:514" > /etc/rsyslog.d/00-honeypot.conf
+	echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
+	read MAX_SPACE
+	configure_rsyslog $SYSLOG_SERV $MAX_SPACE
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
