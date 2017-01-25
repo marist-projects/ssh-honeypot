@@ -161,10 +161,9 @@ function configure_rsyslog {
 	then
 		$2="1"
 	fi
-	if [ -z $1 ]
+	
+	if [[ $1 && $2 ]]
 	then
-		$1=""
-	else
 		sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
 		sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
 		echo "#HONEYPOT CONFIGURATION START" >> /etc/rsyslog.conf
