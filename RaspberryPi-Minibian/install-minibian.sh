@@ -168,7 +168,8 @@ function configure_rsyslog {
 		sed -i '/#$ModLoad .*/ c\$ModLoad imtcp' /etc/rsyslog.conf
 		sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
 		echo "$WorkDirectory /var/lib/rsyslog" >> /etc/rsyslog.conf
-		echo "*.* @@${1}:514" > /etc/rsyslog.d/00-honeypot.confecho "$ActionQueueFileName fwdRule1" >> /etc/rsyslog.conf
+		echo "*.* @@${1}:514" > /etc/rsyslog.d/00-honeypot.conf
+		echo "$ActionQueueFileName fwdRule1" >> /etc/rsyslog.conf
 		echo "$ActionQueueMaxDiskSpace ${2}g" >> /etc/rsyslog.conf
 		echo "$ActionQueueSaveOnShutdown on" >> /etc/rsyslog.conf
 		echo "$ActionQueueType LinkedList" >> /etc/rsyslog.conf
