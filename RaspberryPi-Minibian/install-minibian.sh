@@ -159,17 +159,17 @@ function configure_rsyslog {
 	# Check Inputs
 	if [ -z "$2" ]
 	then
-		DISK_SPACE = "1"
+		$2 = "1"
 	fi
 	if [ -z "$1" ]
 	then
-		SYSLOG = ""
+		$1 = ""
 	else
 		sed -i '/#$ModLoad .*/ c\$ModLoad imtcp' /etc/rsyslog.conf
 		sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
 		echo "$WorkDirectory /var/lib/rsyslog" >> /etc/rsyslog.conf
-		echo "*.* @@${SYSLOG}:514" > /etc/rsyslog.d/00-honeypot.confecho "$ActionQueueFileName fwdRule1" >> /etc/rsyslog.conf
-		echo "$ActionQueueMaxDiskSpace ${DISK_SPACE}g" >> /etc/rsyslog.conf
+		echo "*.* @@${$1}:514" > /etc/rsyslog.d/00-honeypot.confecho "$ActionQueueFileName fwdRule1" >> /etc/rsyslog.conf
+		echo "$ActionQueueMaxDiskSpace ${$2}g" >> /etc/rsyslog.conf
 		echo "$ActionQueueSaveOnShutdown on" >> /etc/rsyslog.conf
 		echo "$ActionQueueType LinkedList" >> /etc/rsyslog.conf
 		echo "$ActionResumeRetryCount -1" >> /etc/rsyslog.conf
