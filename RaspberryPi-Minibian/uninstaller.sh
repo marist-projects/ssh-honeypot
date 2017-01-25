@@ -20,7 +20,7 @@ rm /etc/rsyslog.d/00-honeypot.conf
 echo "Removing Rsyslog Configs......1"
 sed -i '/#HONEYPOT CONFIGURATION START/ c\' /etc/rsyslog.conf
 echo "Removing Rsyslog Configs......2"
-sed -i '/\$WorkDirectory /var/lib/rsyslog/ c\' /etc/rsyslog.conf
+sed -i '/\$WorkDirectory \/var\/lib\/rsyslog\/ c\' /etc/rsyslog.conf
 echo "Removing Rsyslog Configs......3"
 sed -i '/\$ActionQueueFileName fwdRule1/ c\' /etc/rsyslog.conf
 echo "Removing Rsyslog Configs......4"
