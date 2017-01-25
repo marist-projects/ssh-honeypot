@@ -26,6 +26,10 @@ sed -i '/\$ActionQueueType LinkedList/ c\' /etc/rsyslog.conf
 sed -i '/\$ActionResumeRetryCount -1/ c\' /etc/rsyslog.conf
 sed -i '/#HONEYPOT CONFIGURATION END/ c\' /etc/rsyslog.conf
 
+# killing current processes
+ps axf | grep "/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22" | grep -v grep | awk '{print "kill -9 " $1}' | sh
+ps axf | grep "/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222" | grep -v grep | awk '{print "kill -9 " $1}' | sh
+
 echo "Restarting Rsyslog....."
 service rsyslog restart
 echo "Restarting SSH....."
