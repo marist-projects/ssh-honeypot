@@ -159,11 +159,11 @@ function configure_rsyslog {
 	# Check Inputs
 	if [ -z "$2" ]
 	then
-		$2 = "1"
+		2="1"
 	fi
 	if [ -z "$1" ]
 	then
-		$1 = ""
+		1=""
 	else
 		sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
 		sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
