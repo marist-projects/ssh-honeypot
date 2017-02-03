@@ -14,8 +14,7 @@ then
 	rm -r /var/log/ssh-honeypot
 	rm /usr/local/etc/sshd_config-22
 	rm /usr/local/etc/sshd_config-2222
-	rm /usr/local/sbin/sshd-22
-	rm /usr/local/sbin/sshd-2222
+	rm /usr/local/sbin/sshd-new
 	sed -i "0,/RE/s/Port .*/Port 22/g" /etc/ssh/sshd_config
 
 	echo "Removing Rsyslog Configs......"
@@ -44,8 +43,7 @@ then
 	rm -r /var/log/ssh-honeypot
 	rm /usr/local/etc/sshd_config-22
 	rm /usr/local/etc/sshd_config-2222
-	rm /usr/local/sbin/sshd-22
-	rm /usr/local/sbin/sshd-2222
+	rm /usr/local/sbin/sshd-new
 	sed -i "0,/RE/s/Port .*/Port 22/g" /etc/ssh/sshd_config
 
 	echo "Removing Rsyslog Configs......"
