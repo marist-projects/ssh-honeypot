@@ -180,7 +180,7 @@ function configure_rsyslog {
 		echo "\$ActionQueueType LinkedList" >> /etc/rsyslog.conf
 		echo "\$ActionResumeRetryCount -1" >> /etc/rsyslog.conf
 		echo "#HONEYPOT CONFIGURATION END" >> /etc/rsyslog.conf
-		echo "*.* @@${1}:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
+		echo "*.* @@${1};RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
 		service rsyslog restart
 	fi
 }
@@ -209,7 +209,7 @@ do
 	fi
 	CURRENT_SSH_PORT=$SSH_PORT
 
-	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none]:"
+	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
 	echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
 	read MAX_SPACE
