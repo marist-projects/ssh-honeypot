@@ -235,7 +235,7 @@ do
 		install_dependencies
 		create_dir
 		configure_new_ssh
-		parse_port_options $PORT_OPTION
+		finalize_configurations $PORT_OPTION
 		IS_RUNNING=false
 		break
 	fi
