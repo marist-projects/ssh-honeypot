@@ -86,7 +86,7 @@ function install_dependencies {
 		yum update
 		yum groupinstall ‘Development Tools’
 		yum install wget zlib zlib-devel openssl-devel libssh-devel -y
-	elif [[ $OS_DETECT == "Raspbian" ]]
+	elif [[ $OS_DETECT == "Minibian" ]]
 	then
 		echo "Installing Minibian dependencies..."
 		apt-get update

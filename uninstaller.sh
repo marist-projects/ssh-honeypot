@@ -7,7 +7,7 @@
 
 ####################################### Files to Remove #########################################
 
-if [[ $(head -1 /etc/os-release) == *"Debian"* ]] || [[ $(head -1 /etc/os-release) == *"Ubuntu"* ]] || [[ $(head -1 /etc/os-release) == *"Debian"* ]]
+if [[ $(head -1 /etc/os-release) == *"Debian"* ]] || [[ $(head -1 /etc/os-release) == *"Ubuntu"* ]] || [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
 then
 	echo "Deleting SSH Configs....."
 	rm -r /usr/local/source/openssh
