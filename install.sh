@@ -213,7 +213,12 @@ do
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
-		service ssh restart
+		if [[ OS_DETECT == "CentOS" ]]
+		then 
+			service sshd restart
+		else 
+			service ssh restart
+		fi
 		
 		install_dependencies
 		create_dir
