@@ -52,24 +52,26 @@ function display_intro {
 function detect_os {
 	if [[ $(head -1 /etc/os-release) == *"Debian"* ]]
 	then
-		echo "DEBIAN"
+		echo "Installing Debian dependencies..."
+		apt-get update
+		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 	elif [[ $(head -1 /etc/os-release) == *"Ubuntu"* ]]
 	then
-		echo "Ubuntu"
+		echo "Installing Ubuntu dependencies..."
+		apt-get update
+		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 	elif [[ $(head -1 /etc/os-release) == *"CentOS"* ]]
 	then
-		echo "CentOS"
+		echo "Installing CentOS dependencies..."
+		yum update
+		yum groupinstall ‘Development Tools’
+		yum install wget zlib zlib-devel openssl-devel libssh-devel -y
 	elif [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
 	then
-		echo "Raspbian"
+		echo "Installing Minibian dependencies..."
+		apt-get update
+		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 	fi
-}
-
-# Install dependencies 
-function install_dependencies {
-	echo "Installing dependencies..."
-	apt-get update
-	apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 }
 
 # Create directory structure
