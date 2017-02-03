@@ -197,7 +197,7 @@ do
 	then
 		service ssh restart
 		
-		detect_os
+		detect_os_dependencies
 		create_dir
 		configure_new_ssh
 		finalize_configuration
