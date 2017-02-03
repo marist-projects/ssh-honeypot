@@ -199,6 +199,7 @@ display_intro
 detect_os
 while [ $IS_RUNNING ]
 do
+	echo $OS_DETECT
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
 	read SSH_PORT
 	if [[ OS_DETECT == "CentOS" ]]
