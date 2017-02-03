@@ -52,15 +52,19 @@ function detect_os {
 	if [[ $(head -1 /etc/os-release) == *"Debian"* ]]
 	then
 		OS_DETECT="Debian"
+		echo $OS_DETECT
 	elif [[ $(head -1 /etc/os-release) == *"Ubuntu"* ]]
 	then
 		OS_DETECT="Ubuntu"
+		echo $OS_DETECT
 	elif [[ $(head -1 /etc/os-release) == *"CentOS"* ]]
 	then
 		OS_DETECT="CentOS"
+		echo $OS_DETECT
 	elif [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
 	then
 		OS_DETECT="Minibian"
+		echo $OS_DETECT
 	fi
 }
 
