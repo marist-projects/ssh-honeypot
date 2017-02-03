@@ -17,7 +17,7 @@ MOD_SSH_2222_DIR=
 IS_RUNNING=true
 LOG_DIR=
 SYSLOG_SERV=
-OS=
+OS_DETECT=
 
 # ASCII Art Variables  
 RED='\e[0;31m'
@@ -49,26 +49,30 @@ function display_intro {
 }
 
 # Detect the OS to prevent redundancy
-function detect_os {
+function detect_os_dependencies {
 	if [[ $(head -1 /etc/os-release) == *"Debian"* ]]
 	then
 		echo "Installing Debian dependencies..."
+		OS_DETECT="Debian"
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 	elif [[ $(head -1 /etc/os-release) == *"Ubuntu"* ]]
 	then
 		echo "Installing Ubuntu dependencies..."
+		OS_DETECT="Ubuntu"
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 	elif [[ $(head -1 /etc/os-release) == *"CentOS"* ]]
 	then
 		echo "Installing CentOS dependencies..."
+		OS_DETECT="CentOS"
 		yum update
 		yum groupinstall ‘Development Tools’
 		yum install wget zlib zlib-devel openssl-devel libssh-devel -y
 	elif [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
 	then
 		echo "Installing Minibian dependencies..."
+		OS_DETECT="Minibian"
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
 	fi
@@ -176,7 +180,6 @@ fi
 
 # Running the script 
 display_intro
-detect_os
 while [ $IS_RUNNING ]
 do
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
@@ -194,7 +197,7 @@ do
 	then
 		service ssh restart
 		
-		install_dependencies
+		detect_os
 		create_dir
 		configure_new_ssh
 		finalize_configuration
