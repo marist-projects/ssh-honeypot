@@ -58,8 +58,8 @@ then
 	sed -i '/#HONEYPOT CONFIGURATION END/ c\' /etc/rsyslog.conf
 
 	# killing current processes
-	pkill "/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22"
-	pkill "/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222"
+	ps aux | grep "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-22$" | grep -v grep | awk '{print "kill -9 " $2}' | sh
+	ps aux | grep "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-2222$" | grep -v grep | awk '{print "kill -9 " $2}' | sh
 
 	echo "Restarting Rsyslog....."
 	service rsyslog restart
