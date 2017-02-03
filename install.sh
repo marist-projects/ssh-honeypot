@@ -174,6 +174,7 @@ fi
 
 # Running the script 
 display_intro
+detect_os
 while [ $IS_RUNNING ]
 do
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
