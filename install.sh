@@ -120,8 +120,6 @@ function configure_new_ssh {
 	cp ${STARTING_DIRECTORY}/build/auth-passwd.c ${MOD_SSH_DIR}/openssh-7.2p1/auth-passwd.c
 	cp ${STARTING_DIRECTORY}/build/sshd.c ${MOD_SSH_DIR}/openssh-7.2p1/sshd.c
 	cp ${STARTING_DIRECTORY}/build/auth2-pubkey.c ${MOD_SSH_DIR}/openssh-7.2p1/auth2-pubkey.c
-	cp ${STARTING_DIRECTORY}/build/sshd_config-22 /usr/local/etc/sshd_config-22
-	cp ${STARTING_DIRECTORY}/build/sshd_config-2222 /usr/local/etc/sshd_config-2222
 	
 	echo "Compiling & installing SSH..."
 	cd ${MOD_SSH_DIR}/openssh-7.2p1
@@ -132,8 +130,7 @@ function configure_new_ssh {
 	chmod a+rx sshd /usr/local/sbin/sshd-new
 }
 
-# Finalizing configurations
-function finalize_configuration {
+function finalize_configurations {
 	echo "#!/bin/sh -e" > /etc/rc.local
 	echo "#" >> /etc/rc.local
 	echo "# rc.local" >> /etc/rc.local
@@ -146,19 +143,26 @@ function finalize_configuration {
 	echo "# bits." >> /etc/rc.local
 	echo "#" >> /etc/rc.local
 	echo "# By default this script does nothing." >> /etc/rc.local
-	echo "/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22 " >> /etc/rc.local
-	echo "/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222 " >> /etc/rc.local
-	echo "exit 0" >> /etc/rc.local
-	/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-22
-	/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-2222
+
+	for i in $(echo $1 | sed "s/,/ /g")
+	do
+		setup_configs $i
+		echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+		/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+		export ACTIVE_HP_PORTS=$ACTIVE_HP_PORTS:${i},
+	done
 	
+	echo "exit 0" >> /etc/rc.local
 	cd $STARTING_DIRECTORY
+}
+
+function setup_configs {
+	cp ${STARTING_DIRECTORY}/build/sshd_config-template /usr/local/etc/sshd_config-${1}
+	sed -i "0,/RE/s/Port .*/Port ${1}/g" /etc/ssh/sshd_config-${1}
 }
 
 # Configure RSYSLOG
 function configure_rsyslog {
-	#SYSLOG = $1
-	#DISK_SPACE = $2
 	
 	echo "Configuring RSYSLOG..."
 	
@@ -208,6 +212,10 @@ do
 		sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	fi
 	CURRENT_SSH_PORT=$SSH_PORT
+	
+	echo -n "Specify a port range or comma-separated ports to install honeypots on [22-30 or 22,2222,30]:"
+	read PORT_OPTION
+	
 
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
@@ -227,7 +235,7 @@ do
 		install_dependencies
 		create_dir
 		configure_new_ssh
-		finalize_configuration
+		parse_port_options $PORT_OPTION
 		IS_RUNNING=false
 		break
 	fi
