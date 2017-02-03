@@ -70,23 +70,23 @@ function detect_os {
 
 # Detect the OS to prevent redundancy
 function install_dependencies {
-	if [[ OS_DETECT == "Debian" ]]
+	if [[ $OS_DETECT == "Debian" ]]
 	then
 		echo "Installing Debian dependencies..."
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ OS_DETECT == "Ubuntu" ]]
+	elif [[ $OS_DETECT == "Ubuntu" ]]
 	then
 		echo "Installing Ubuntu dependencies..."
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ OS_DETECT == "CentOS" ]]
+	elif [[ $OS_DETECT == "CentOS" ]]
 	then
 		echo "Installing CentOS dependencies..."
 		yum update
 		yum groupinstall ‘Development Tools’
 		yum install wget zlib zlib-devel openssl-devel libssh-devel -y
-	elif [[ OS_DETECT == "Raspbian" ]]
+	elif [[ $OS_DETECT == "Raspbian" ]]
 	then
 		echo "Installing Minibian dependencies..."
 		apt-get update
@@ -199,10 +199,9 @@ display_intro
 detect_os
 while [ $IS_RUNNING ]
 do
-	echo $OS_DETECT
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
 	read SSH_PORT
-	if [[ OS_DETECT == "CentOS" ]]
+	if [[ $OS_DETECT == "CentOS" ]]
 	then 
 		sed -i "0,/RE/s/#Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	else
@@ -218,7 +217,7 @@ do
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
-		if [[ OS_DETECT == "CentOS" ]]
+		if [[ $OS_DETECT == "CentOS" ]]
 		then 
 			service sshd restart
 		else 
