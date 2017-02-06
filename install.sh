@@ -144,13 +144,25 @@ function finalize_configurations {
 	echo "#" >> /etc/rc.local
 	echo "# By default this script does nothing." >> /etc/rc.local
 
-	for i in $(echo $1 | sed "s/,/ /g")
-	do
-		setup_configs $i
-		echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
-		/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
-		export ACTIVE_HP_PORTS=$ACTIVE_HP_PORTS:${i},
-	done
+	if [[ $2 == "comma" ]]
+	then 
+		for i in $(echo $1 | sed "s/,/ /g")
+		do
+			setup_configs $i
+			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+			export ACTIVE_HP_PORTS=$ACTIVE_HP_PORTS:${i},
+		done
+	elif [[ $2 == "range" ]]
+	then
+		for i in $(echo $1 | sed "s/-/ /g")
+		do
+			setup_configs $i
+			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+			export ACTIVE_HP_PORTS=$ACTIVE_HP_PORTS:${i},
+		done
+	fi
 	
 	echo "exit 0" >> /etc/rc.local
 	cd $STARTING_DIRECTORY
@@ -158,7 +170,7 @@ function finalize_configurations {
 
 function setup_configs {
 	cp ${STARTING_DIRECTORY}/build/sshd_config-template /usr/local/etc/sshd_config-${1}
-	sed -i "0,/RE/s/Port .*/Port ${1}/g" /etc/ssh/sshd_config-${1}
+	sed -i "0,/RE/s/Port .*/Port ${1}/g" /usr/local/etc/sshd_config-${1}
 }
 
 # Configure RSYSLOG
@@ -215,6 +227,17 @@ do
 	
 	echo -n "Specify a port range or comma-separated ports to install honeypots on [22-30 or 22,2222,30]:"
 	read PORT_OPTION
+	FLAG_PORT=
+	if [[ $FLAG_PORT == *","* ]]
+	then
+		FLAG_PORT="comma"
+	elif  [[ $FLAG_PORT == *"-"* ]]
+	then
+		FLAG_PORT="range"
+	else
+		FLAG_PORT="null"
+	fi
+
 	
 
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
@@ -235,7 +258,7 @@ do
 		install_dependencies
 		create_dir
 		configure_new_ssh
-		finalize_configurations $PORT_OPTION
+		finalize_configurations $PORT_OPTION $FLAG_PORT
 		IS_RUNNING=false
 		break
 	fi
