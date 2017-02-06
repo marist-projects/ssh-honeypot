@@ -148,6 +148,7 @@ function finalize_configurations {
 	then 
 		for i in $(echo $1 | sed "s/,/ /g")
 		do
+			echo "Testing Commas"
 			setup_configs $i
 			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
 			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
@@ -157,6 +158,7 @@ function finalize_configurations {
 	then
 		for i in $(echo $1 | sed "s/-/ /g")
 		do
+			echo "Testing Range"
 			setup_configs $i
 			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
 			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
