@@ -144,25 +144,28 @@ function finalize_configurations {
 	echo "#" >> /etc/rc.local
 	echo "# By default this script does nothing." >> /etc/rc.local
 
-	if [[ $2 == "comma" ]]
-	then 
+	echo "Ports:" > /usr/local/etc/active_ports.txt
+	if [[ $1 == *","* ]]
+	then
 		for i in $(echo $1 | sed "s/,/ /g")
 		do
-			echo "Testing Commas"
 			setup_configs $i
 			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
 			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
-			export ACTIVE_HP_PORTS=$ACTIVE_HP_PORTS:${i},
+			echo -n "${i}," >> /usr/local/etc/active_ports.txt	
 		done
-	elif [[ $2 == "range" ]]
+	elif [[ $1 == *"-"* ]]
 	then
-		for i in $(echo $1 | sed "s/-/ /g")
+		FIRST=$(($(cut -d "-" -f 1 <<< $1)))
+		LAST=$(($(cut -d "-" -f 2 <<< $1)))
+		for  ((i=$FIRST; i <= $LAST; i++))
 		do
+			echo ${i}	
 			echo "Testing Range"
 			setup_configs $i
 			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
 			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
-			export ACTIVE_HP_PORTS=$ACTIVE_HP_PORTS:${i},
+			echo -n "${i}," >> /usr/local/etc/active_ports.txt	
 		done
 	fi
 	
@@ -228,19 +231,7 @@ do
 	CURRENT_SSH_PORT=$SSH_PORT
 	
 	echo -n "Specify a port range or comma-separated ports to install honeypots on [22-30 or 22,2222,30]:"
-	read PORT_OPTION
-	FLAG_PORT=
-	if [[ $FLAG_PORT == *","* ]]
-	then
-		FLAG_PORT="comma"
-	elif  [[ $FLAG_PORT == *"-"* ]]
-	then
-		FLAG_PORT="range"
-	else
-		FLAG_PORT="null"
-	fi
-
-	
+	read FLAG_PORT
 
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
@@ -260,7 +251,7 @@ do
 		install_dependencies
 		create_dir
 		configure_new_ssh
-		finalize_configurations $PORT_OPTION $FLAG_PORT
+		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
 		break
 	fi

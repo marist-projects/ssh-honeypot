@@ -24,19 +24,14 @@ sed -i '/\$ActionQueueType LinkedList/ c\' /etc/rsyslog.conf
 sed -i '/\$ActionResumeRetryCount -1/ c\' /etc/rsyslog.conf
 sed -i '/#HONEYPOT CONFIGURATION END/ c\' /etc/rsyslog.conf
 
+ACTIVE_HP_PORTS=$(cat /usr/local/etc/active_ports.txt | tail -1)
+
 # killing current processes
 for i in $(echo $ACTIVE_HP_PORTS | sed "s/,/ /g")
 do
-	for f in /usr/local/etc/*
-	do
-		if [[ "$f" == "sshd_config-*" ]]
-		then
-			echo sshd_config-${i} | sed -e 's/sshd_config-*//g'
-			ps axf | grep "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}" | grep -v grep | awk '{print "kill -9 " $1}' | sh
-		fi
-	done
+	echo sshd_config-${i} | sed -e 's/sshd_config-*//g'
+	ps axf | grep "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}" | grep -v grep | awk '{print "kill -9 " $1}' | sh
 done
-ACTIVE_HP_PORTS=
 
 echo "Restarting Rsyslog....."
 service rsyslog restart
@@ -50,3 +45,5 @@ then
 	echo "Restarting SSH....."
 	service sshd restart
 fi
+
+rm /usr/local/etc/active_ports.txt
