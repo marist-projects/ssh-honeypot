@@ -145,29 +145,36 @@ function finalize_configurations {
 	echo "# By default this script does nothing." >> /etc/rc.local
 
 	echo "Ports:" > /usr/local/etc/active_ports.txt
-	if [[ $1 == *","* ]]
+	if [[ $1 ]]
 	then
-		for i in $(echo $1 | sed "s/,/ /g")
-		do
-			setup_configs $i
-			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
-			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
-			echo -n "${i}," >> /usr/local/etc/active_ports.txt	
-		done
-	elif [[ $1 == *"-"* ]]
-	then
-		FIRST=$(($(cut -d "-" -f 1 <<< $1)))
-		LAST=$(($(cut -d "-" -f 2 <<< $1)))
-		for  ((i=$FIRST; i <= $LAST; i++))
-		do
-			echo ${i}	
-			echo "Testing Range"
-			setup_configs $i
-			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
-			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
-			echo -n "${i}," >> /usr/local/etc/active_ports.txt	
-		done
-	fi
+		if [[ $1 == *","* ]]
+		then
+			for i in $(echo $1 | sed "s/,/ /g")
+			do
+				setup_configs $i
+				echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+				/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
+			done
+		elif [[ $1 == *"-"* ]]
+		then
+			FIRST=$(($(cut -d "-" -f 1 <<< $1)))
+			LAST=$(($(cut -d "-" -f 2 <<< $1)))
+			for  ((i=$FIRST; i <= $LAST; i++))
+			do
+				echo ${i}	
+				echo "Testing Range"
+				setup_configs $i
+				echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+				/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
+			done
+		else
+			setup_configs $1
+			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}" >> /etc/rc.local
+			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}
+			echo -n "${1}," >> /usr/local/etc/active_ports.txt
+		fi
 	
 	echo "exit 0" >> /etc/rc.local
 	cd $STARTING_DIRECTORY
