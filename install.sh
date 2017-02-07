@@ -183,12 +183,6 @@ function configure_rsyslog {
 	
 	echo "Configuring RSYSLOG..."
 	
-	# Check Inputs
-	if [ -z $2 ]
-	then
-		$2="1"
-	fi
-	
 	if [[ $1 && $2 ]]
 	then
 		sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
@@ -237,7 +231,13 @@ do
 	read SYSLOG_SERV
 	echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
 	read MAX_SPACE
-	configure_rsyslog $SYSLOG_SERV $MAX_SPACE
+	if [[ -z $MAX_SPACE ]]
+	then
+		TEMP="0"
+		configure_rsyslog $SYSLOG_SERV $TEMP
+	else
+		configure_rsyslog $SYSLOG_SERV $MAX_SPACE	
+	fi
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
