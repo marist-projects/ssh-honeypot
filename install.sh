@@ -175,6 +175,7 @@ function finalize_configurations {
 			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}
 			echo -n "${1}," >> /usr/local/etc/active_ports.txt
 		fi
+	fi
 	
 	echo "exit 0" >> /etc/rc.local
 	cd $STARTING_DIRECTORY
