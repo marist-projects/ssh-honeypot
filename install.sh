@@ -193,8 +193,15 @@ function configure_rsyslog {
 	
 	if [[ $1 && $2 ]]
 	then
-		sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
-		sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
+		if [[ $3 == "UDP" ]]
+		then
+			sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
+			sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
+		elif [[ $3 == "TCP" ]]
+		then
+			sed -i '/#$ModLoad imudp/ c\$ModLoad imudp' /etc/rsyslog.conf
+			sed -i '/#$InputUDPServerRun .*/ c\$InputUDPServerRun 514' /etc/rsyslog.conf
+		fi
 		echo "#HONEYPOT CONFIGURATION START" >> /etc/rsyslog.conf
 		echo "\$WorkDirectory /var/lib/rsyslog" >> /etc/rsyslog.conf
 		echo "\$ActionQueueFileName fwdRule1" >> /etc/rsyslog.conf
@@ -237,14 +244,16 @@ do
 
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
+	echo -n "Which protocol would you like to use for SYSLOG (UDP or TCP):"
+	read PROTO
 	echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
 	read MAX_SPACE
 	if [[ -z $MAX_SPACE ]]
 	then
 		TEMP="0"
-		configure_rsyslog $SYSLOG_SERV $TEMP
+		configure_rsyslog $SYSLOG_SERV $TEMP $PROTO
 	else
-		configure_rsyslog $SYSLOG_SERV $MAX_SPACE	
+		configure_rsyslog $SYSLOG_SERV $MAX_SPACE $PROTO
 	fi
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
