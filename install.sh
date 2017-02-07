@@ -120,8 +120,6 @@ function configure_new_ssh {
 	cp ${STARTING_DIRECTORY}/build/auth-passwd.c ${MOD_SSH_DIR}/openssh-7.2p1/auth-passwd.c
 	cp ${STARTING_DIRECTORY}/build/sshd.c ${MOD_SSH_DIR}/openssh-7.2p1/sshd.c
 	cp ${STARTING_DIRECTORY}/build/auth2-pubkey.c ${MOD_SSH_DIR}/openssh-7.2p1/auth2-pubkey.c
-	cp ${STARTING_DIRECTORY}/build/sshd_config-22 /usr/local/etc/sshd_config-22
-	cp ${STARTING_DIRECTORY}/build/sshd_config-2222 /usr/local/etc/sshd_config-2222
 	
 	echo "Compiling & installing SSH..."
 	cd ${MOD_SSH_DIR}/openssh-7.2p1
@@ -132,8 +130,7 @@ function configure_new_ssh {
 	chmod a+rx sshd /usr/local/sbin/sshd-new
 }
 
-# Finalizing configurations
-function finalize_configuration {
+function finalize_configurations {
 	echo "#!/bin/sh -e" > /etc/rc.local
 	echo "#" >> /etc/rc.local
 	echo "# rc.local" >> /etc/rc.local
@@ -146,27 +143,53 @@ function finalize_configuration {
 	echo "# bits." >> /etc/rc.local
 	echo "#" >> /etc/rc.local
 	echo "# By default this script does nothing." >> /etc/rc.local
-	echo "/usr/local/sbin/sshd-22 -f /usr/local/etc/sshd_config-22 " >> /etc/rc.local
-	echo "/usr/local/sbin/sshd-2222 -f /usr/local/etc/sshd_config-2222 " >> /etc/rc.local
-	echo "exit 0" >> /etc/rc.local
-	/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-22
-	/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-2222
+
+	echo "Ports:" > /usr/local/etc/active_ports.txt
+	if [[ $1 ]]
+	then
+		if [[ $1 == *","* ]]
+		then
+			for i in $(echo $1 | sed "s/,/ /g")
+			do
+				setup_configs $i
+				echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+				/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
+			done
+		elif [[ $1 == *"-"* ]]
+		then
+			FIRST=$(($(cut -d "-" -f 1 <<< $1)))
+			LAST=$(($(cut -d "-" -f 2 <<< $1)))
+			for  ((i=$FIRST; i <= $LAST; i++))
+			do
+				echo ${i}	
+				echo "Testing Range"
+				setup_configs $i
+				echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+				/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
+			done
+		else
+			setup_configs $1
+			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}" >> /etc/rc.local
+			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}
+			echo -n "${1}," >> /usr/local/etc/active_ports.txt
+		fi
+	fi
 	
+	echo "exit 0" >> /etc/rc.local
 	cd $STARTING_DIRECTORY
+}
+
+function setup_configs {
+	cp ${STARTING_DIRECTORY}/build/sshd_config-template /usr/local/etc/sshd_config-${1}
+	sed -i "0,/RE/s/Port .*/Port ${1}/g" /usr/local/etc/sshd_config-${1}
 }
 
 # Configure RSYSLOG
 function configure_rsyslog {
-	#SYSLOG = $1
-	#DISK_SPACE = $2
 	
 	echo "Configuring RSYSLOG..."
-	
-	# Check Inputs
-	if [ -z $2 ]
-	then
-		$2="1"
-	fi
 	
 	if [[ $1 && $2 ]]
 	then
@@ -208,12 +231,21 @@ do
 		sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	fi
 	CURRENT_SSH_PORT=$SSH_PORT
+	
+	echo -n "Specify a port range or comma-separated ports to install honeypots on [22-30 or 22,2222,30]:"
+	read FLAG_PORT
 
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
 	echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
 	read MAX_SPACE
-	configure_rsyslog $SYSLOG_SERV $MAX_SPACE
+	if [[ -z $MAX_SPACE ]]
+	then
+		TEMP="0"
+		configure_rsyslog $SYSLOG_SERV $TEMP
+	else
+		configure_rsyslog $SYSLOG_SERV $MAX_SPACE	
+	fi
 	
 	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
 	then
@@ -227,7 +259,7 @@ do
 		install_dependencies
 		create_dir
 		configure_new_ssh
-		finalize_configuration
+		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
 		break
 	fi
