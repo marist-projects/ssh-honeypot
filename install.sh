@@ -193,11 +193,11 @@ function configure_rsyslog {
 	
 	if [[ $1 && $2 ]]
 	then
-		if [[ $3 == "UDP" ]]
+		if [[ $3 == "TCP" ]]
 		then
 			sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
 			sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
-		elif [[ $3 == "TCP" ]]
+		elif [[ $3 == "UDP" ]]
 		then
 			sed -i '/#$ModLoad imudp/ c\$ModLoad imudp' /etc/rsyslog.conf
 			sed -i '/#$InputUDPServerRun .*/ c\$InputUDPServerRun 514' /etc/rsyslog.conf
