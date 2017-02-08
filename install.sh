@@ -267,7 +267,7 @@ do
 		
 		install_dependencies
 		create_dir
-		if [[ $HPID ]]
+		if [[ -z $HPID ]]
 		then 
 			HPID=$(dbus-uuidgen);export HPID
 		fi
