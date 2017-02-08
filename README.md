@@ -30,10 +30,10 @@
 		- [ ] ONLY run if you would like to revert your server back
 		
 ##FAQ
-	1. Where do I find manual install/uninstall instructions?
-	..* You can find manual install/uninstall instructions in the documentation folder
-	2. Why do you recommend putting the real SSH port above 48000?
-	..* Most scripts do not bother to scan that high. If you want to further protect yourself please use SSH keys.
+1. Where do I find manual install/uninstall instructions?
+..* You can find manual install/uninstall instructions in the documentation folder
+2. Why do you recommend putting the real SSH port above 48000?
+..* Most scripts do not bother to scan that high. If you want to further protect yourself please use SSH keys.
 	
 
 # License
