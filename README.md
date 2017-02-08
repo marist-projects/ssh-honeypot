@@ -22,11 +22,19 @@
 			- [ ] Specify UDP or TCP for sending your logs
 		- [ ] Please specifiy the maximum number of GB to store for message queue[enter for 1GB]
 			- [ ] Please enter a numberic value for the amount of GBs you want to decicate to the message queue
-- [ ] OPTIONAL: Uninstalling
+
+##General Automatic Uninstall Documentation
+- [ ] Uninstalling
 	- [ ] Run uninstall script
 		- [ ] ./uninstall.sh
 		- [ ] ONLY run if you would like to revert your server back
-
+		
+##FAQ
+	1. Where do I find manual install/uninstall instructions?
+	..* You can find manual install/uninstall instructions in the documentation folder
+	2. Why do you recommend putting the real SSH port above 48000?
+	..* Most scripts do not bother to scan that high. If you want to further protect yourself please use SSH keys.
+	
 
 # License
 This is a minimal-interaction SSH-Honeypot and can be used as a "Brute-Force" Analysis Tool.
