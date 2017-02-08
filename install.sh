@@ -267,6 +267,10 @@ do
 		
 		install_dependencies
 		create_dir
+		if [[ $HPID ]]
+		then 
+			HPID=$(dbus-uuidgen)
+		fi
 		configure_new_ssh
 		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
