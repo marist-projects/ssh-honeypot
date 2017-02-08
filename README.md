@@ -2,7 +2,7 @@
 ##General Automatic Install Documentation
 - [ ] Pre-Install Commands
 	- [ ] Update and Upgrade Packages 
-		- [ ]apt-get update && apt-get upgrade/yum update && yum upgrade
+		- [ ] apt-get update && apt-get upgrade/yum update && yum upgrade
 	- [ ] Download Source Files
 		- [ ] apt-get install git/yum install git
 		- [ ] git clone https://github.com/marist-projects/ssh-honeypot.git
@@ -23,7 +23,7 @@
 		- [ ] Please specifiy the maximum number of GB to store for message queue[enter for 1GB]
 			- [ ] Please enter a numberic value for the amount of GBs you want to decicate to the message queue
 - [ ] OPTIONAL: Uninstalling
-	- [ ]Run uninstall script
+	- [ ] Run uninstall script
 		- [ ] ./uninstall.sh
 		- [ ] ONLY run if you would like to revert your server back
 
