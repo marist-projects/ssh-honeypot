@@ -269,7 +269,7 @@ do
 		create_dir
 		if [[ -z $HPID ]]
 		then 
-			HPID=$(dbus-uuidgen);export HPID
+			. generate_id.sh
 		fi
 		echo $HPID
 		configure_new_ssh
