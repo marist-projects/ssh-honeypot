@@ -177,6 +177,8 @@ function finalize_configurations {
 		fi
 	fi
 	
+	echo "export HPID=${HPID}" >> /etc/rc.local
+	
 	echo "exit 0" >> /etc/rc.local
 	cd $STARTING_DIRECTORY
 }
@@ -269,7 +271,7 @@ do
 		create_dir
 		if [[ -z $HPID ]]
 		then 
-			. generate_id.sh
+			export HPID=$(dbus-uuidgen)
 		fi
 		echo $HPID
 		configure_new_ssh
