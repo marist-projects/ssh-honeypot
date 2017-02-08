@@ -269,8 +269,9 @@ do
 		create_dir
 		if [[ $HPID ]]
 		then 
-			HPID=$(dbus-uuidgen)
+			HPID=$(dbus-uuidgen);export HPID
 		fi
+		echo $HPID
 		configure_new_ssh
 		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
