@@ -143,6 +143,7 @@ function finalize_configurations {
 	echo "# bits." >> /etc/rc.local
 	echo "#" >> /etc/rc.local
 	echo "# By default this script does nothing." >> /etc/rc.local
+	echo "export HPID=${HPID}" >> /etc/rc.local
 
 	echo "Ports:" > /usr/local/etc/active_ports.txt
 	if [[ $1 ]]
@@ -176,9 +177,7 @@ function finalize_configurations {
 			echo -n "${1}," >> /usr/local/etc/active_ports.txt
 		fi
 	fi
-	
-	echo "export HPID=${HPID}" >> /etc/rc.local
-	
+		
 	echo "exit 0" >> /etc/rc.local
 	cd $STARTING_DIRECTORY
 }
