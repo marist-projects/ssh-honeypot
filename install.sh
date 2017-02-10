@@ -179,6 +179,7 @@ function finalize_configurations {
 	fi
 		
 	echo "exit 0" >> /etc/rc.local
+	chmod a+x /etc/rc.local
 	cd $STARTING_DIRECTORY
 }
 
