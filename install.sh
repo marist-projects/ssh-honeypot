@@ -232,12 +232,7 @@ while [ $IS_RUNNING ]
 do
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
 	read SSH_PORT
-	if [[ $OS_DETECT == "CentOS" ]]
-	then 
-		sed -i "0,/RE/s/#Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
-	else
-		sed -i "0,/RE/s/Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
-	fi
+	sed -i "0,/RE/s/.*Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	CURRENT_SSH_PORT=$SSH_PORT
 	
 	echo -n "Specify a port range or comma-separated ports to install honeypots on [22-30 or 22,2222,30]:"
