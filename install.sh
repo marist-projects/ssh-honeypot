@@ -290,6 +290,8 @@ do
 		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
 		break
+	else
+		echo -e "${RED}Please provide sufficient parameters${RESET}"
 	fi
 done
 
