@@ -264,9 +264,12 @@ do
 		
 		install_dependencies
 		create_dir
-		if [[ -z $HPID ]]
+		
+		CHECK_ID=$(grep -oP "HPID=.*" /etc/environment | sed 's/HPID=//g')
+		if [[ -z $CHECK_ID ]]
 		then 
 			export HPID=$(dbus-uuidgen)
+			echo "HPID=${HPID}" >> /etc/environment
 		fi
 		echo $HPID
 		configure_new_ssh
