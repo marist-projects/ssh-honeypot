@@ -14,7 +14,10 @@ rm /usr/local/sbin/sshd-new
 sed -i "0,/RE/s/Port .*/Port 22/g" /etc/ssh/sshd_config
 
 echo "Removing Rsyslog Configs......"
-rm /etc/rsyslog.d/00-honeypot.conf
+if [[ $(ls /etc/rsyslog.d/00-honeypot) ]]
+then
+	rm /etc/rsyslog.d/00-honeypot.conf
+fi
 sed -i '/#HONEYPOT CONFIGURATION START/ c\' /etc/rsyslog.conf
 sed -i '/\$WorkDirectory \/var\/lib\/rsyslog/ c\' /etc/rsyslog.conf
 sed -i '/\$ActionQueueFileName fwdRule1/ c\' /etc/rsyslog.conf

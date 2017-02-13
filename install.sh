@@ -231,29 +231,43 @@ display_intro
 detect_os
 while [ $IS_RUNNING ]
 do
+	# Prompt for new SSH port + change chosen SSH port
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
 	read SSH_PORT
 	sed -i "0,/RE/s/.*Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
 	CURRENT_SSH_PORT=$SSH_PORT
 	
+	# Prompt for specific ports on which to install a fake SSH Daemon on
 	echo -n "Specify a port range or comma-separated ports to install honeypots on [22-30 or 22,2222,30]:"
 	read FLAG_PORT
 
+	# Prompt for a central Syslog server to send log files to
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
-	echo -n "Which protocol would you like to use for SYSLOG (UDP or TCP):"
-	read PROTO
-	echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
-	read MAX_SPACE
-	if [[ -z $MAX_SPACE ]]
-	then
-		TEMP="0"
-		configure_rsyslog $SYSLOG_SERV $TEMP $PROTO
-	else
+	
+	if [[ $SYSLOG_SERV ]]
+	then 
+	
+		# Prompt for either UDP or TCP for Syslog
+		echo -n "Which protocol would you like to use for SYSLOG (UDP or TCP):"
+		read PROTO
+		if [[ -z $PROTO ]]
+		then
+			PROTO="TCP"
+		fi
+		
+		# Prompt for the maximum space for the system to store unsent log files 
+		echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
+		read MAX_SPACE
+		if [[ -z $MAX_SPACE ]]
+		then
+			MAX_SPACE="0"
+		fi
 		configure_rsyslog $SYSLOG_SERV $MAX_SPACE $PROTO
+			
 	fi
 	
-	if [ "$CURRENT_SSH_PORT" -ne 22 ] || [ "$CURRENT_SSH_PORT" -ne 2222 ]
+	if [[ $FLAG_PORT ]]
 	then
 		if [[ $OS_DETECT == "CentOS" ]]
 		then 
