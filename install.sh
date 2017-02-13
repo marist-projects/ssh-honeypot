@@ -281,4 +281,5 @@ done
 
 #################################################################################################
 
+echo -e "${RED}Please reboot your system for all changes to take place${RESET}"
 exit
