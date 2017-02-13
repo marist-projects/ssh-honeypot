@@ -215,6 +215,8 @@ function configure_rsyslog {
 		echo "*.* @@${1};RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
 		service rsyslog restart
 	fi
+	
+	source /etc/environment
 }
 
 #################################################################################################
@@ -284,9 +286,10 @@ do
 		CHECK_ID=$(grep -oP "HPID=.*" /etc/environment | sed 's/HPID=//g')
 		if [[ -z $CHECK_ID ]]
 		then 
-			echo "HPID=$(dbus-uuidgen)" >> /etc/environment
+			export HPID=$(dbus-uuidgen)
+			echo "HPID=${HPID}" >> /etc/environment
 		fi
-		
+		echo $HPID
 		configure_new_ssh
 		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
@@ -296,5 +299,4 @@ done
 
 #################################################################################################
 
-echo -e "${RED}Please reboot your system for all changes to take place${RESET}"
 exit
