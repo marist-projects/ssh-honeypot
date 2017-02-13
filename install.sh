@@ -267,8 +267,10 @@ do
 			
 	fi
 	
-	if [[ $FLAG_PORT ]]
+	if [[ -z $FLAG_PORT ]]
 	then
+		echo -e "${RED}Please provide sufficient parameters${RESET}"
+	else
 		if [[ $OS_DETECT == "CentOS" ]]
 		then 
 			service sshd restart
@@ -290,8 +292,6 @@ do
 		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
 		break
-	else
-		echo -e "${RED}Please provide sufficient parameters${RESET}"
 	fi
 done
 
