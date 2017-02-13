@@ -284,10 +284,9 @@ do
 		CHECK_ID=$(grep -oP "HPID=.*" /etc/environment | sed 's/HPID=//g')
 		if [[ -z $CHECK_ID ]]
 		then 
-			export HPID=$(dbus-uuidgen)
-			echo "HPID=${HPID}" >> /etc/environment
+			echo "HPID=$(dbus-uuidgen)" >> /etc/environment
 		fi
-		echo $HPID
+		
 		configure_new_ssh
 		finalize_configurations $FLAG_PORT
 		IS_RUNNING=false
