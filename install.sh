@@ -157,19 +157,6 @@ function finalize_configurations {
 				/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
 				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
 			done
-		#elif [[ $1 == *"-"* ]]
-		#then
-		#	FIRST=$(($(cut -d "-" -f 1 <<< $1)))
-		#	LAST=$(($(cut -d "-" -f 2 <<< $1)))
-		#	for  ((i=$FIRST; i <= $LAST; i++))
-		#	do
-		#		echo ${i}	
-		#		echo "Testing Range"
-		#		setup_configs $i
-		#		echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
-		#		/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
-		#		echo -n "${i}," >> /usr/local/etc/active_ports.txt	
-		#	done
 		else
 			setup_configs $1
 			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}" >> /etc/rc.local
