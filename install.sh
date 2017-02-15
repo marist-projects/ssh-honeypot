@@ -157,19 +157,19 @@ function finalize_configurations {
 				/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
 				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
 			done
-		elif [[ $1 == *"-"* ]]
-		then
-			FIRST=$(($(cut -d "-" -f 1 <<< $1)))
-			LAST=$(($(cut -d "-" -f 2 <<< $1)))
-			for  ((i=$FIRST; i <= $LAST; i++))
-			do
-				echo ${i}	
-				echo "Testing Range"
-				setup_configs $i
-				echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
-				/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
-				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
-			done
+		#elif [[ $1 == *"-"* ]]
+		#then
+		#	FIRST=$(($(cut -d "-" -f 1 <<< $1)))
+		#	LAST=$(($(cut -d "-" -f 2 <<< $1)))
+		#	for  ((i=$FIRST; i <= $LAST; i++))
+		#	do
+		#		echo ${i}	
+		#		echo "Testing Range"
+		#		setup_configs $i
+		#		echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i} " >> /etc/rc.local
+		#		/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${i}
+		#		echo -n "${i}," >> /usr/local/etc/active_ports.txt	
+		#	done
 		else
 			setup_configs $1
 			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}" >> /etc/rc.local
@@ -240,7 +240,7 @@ do
 	CURRENT_SSH_PORT=$SSH_PORT
 	
 	# Prompt for specific ports on which to install a fake SSH Daemon on
-	echo -n "Specify a port range or comma-separated ports to install honeypots on [22-30 or 22,2222,30]:"
+	echo -n "Specify comma-separated ports to install the fake SSH Daemon on [EX: 22,2222,30]:"
 	read FLAG_PORT
 
 	# Prompt for a central Syslog server to send log files to
