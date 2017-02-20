@@ -18,6 +18,8 @@ IS_RUNNING=true
 LOG_DIR=
 SYSLOG_SERV=
 OS_DETECT=
+ERROR_MSG=
+INSTALL_OK=true
 
 # ASCII Art Variables  
 RED='\e[0;31m'
@@ -158,10 +160,11 @@ function finalize_configurations {
 				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
 			done
 		else
-			setup_configs $1
-			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}" >> /etc/rc.local
-			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}
-			echo -n "${1}," >> /usr/local/etc/active_ports.txt
+			TEMPPORT=$(echo $1 | sed 's/[^0-9]*//g')
+			setup_configs $TEMPPORT
+			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${TEMPPORT}" >> /etc/rc.local
+			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${TEMPPORT}
+			echo -n "${TEMPPORT}," >> /usr/local/etc/active_ports.txt
 		fi
 	fi
 		
@@ -224,7 +227,6 @@ do
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
 	read SSH_PORT
 	sed -i "0,/RE/s/.*Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
-	CURRENT_SSH_PORT=$SSH_PORT
 	
 	# Prompt for specific ports on which to install a fake SSH Daemon on
 	echo -n "Specify comma-separated ports to install the fake SSH Daemon on [EX: 22,2222,30]:"
@@ -234,6 +236,8 @@ do
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
 	
+	# Check if Syslog parameters are correct
+	# 	if they are then configure rsyslog
 	if [[ $SYSLOG_SERV ]]
 	then 
 	
@@ -256,9 +260,43 @@ do
 			
 	fi
 	
+	# Error Checking 
 	if [[ -z $FLAG_PORT ]]
 	then
-		echo -e "${RED}Please provide sufficient parameters${RESET}"
+		ERROR_MSG=ERROR_MSG + "${RED}Please specify which ports the honeypot should be installed on${RESET}\n"
+		UPLOAD_OK=false
+	else
+		if [[ $FLAG_PORT == *","* ]]
+		then
+			for i in $(echo $FLAG_PORT | sed "s/,/ /g")
+			do
+				if [[ "${i}" == "${CURRENT_SSH_PORT}" ]]
+				then
+					ERROR_MSG=ERROR_MSG+"${RED}Cannot set Honeypot SSH daemone to already bound port${RESET}\n"
+					UPLOAD_OK=false
+				fi
+			done
+		else
+			CHECKPORT=$(echo $FLAG_PORT | sed 's/[^0-9]*//g')
+			if [[ "${CHECKPORT}" == "${CURRENT_SSH_PORT}" ]]
+			then
+				ERROR_MSG=ERROR_MSG+"${RED}Cannot set Honeypot SSH daemone to already bound port${RESET}\n"
+				UPLOAD_OK=false
+			fi
+		fi
+	fi
+	
+	if [[ -z $OS_DETECT ]]
+	then
+		ERROR_MSG=ERROR_MSG + "${RED}OS not detected${RESET}\n"
+		UPLOAD_OK=false
+	fi
+	# End Error Checking
+	
+	# If everything OK run install for Honeypot SSH Daemon
+	if [[ "${UPLOAD_OK}" = false ]]
+	then
+		echo -e $ERROR_MSG
 	else
 		if [[ $OS_DETECT == "CentOS" ]]
 		then 
@@ -266,6 +304,7 @@ do
 		else 
 			service ssh restart
 		fi
+		CURRENT_SSH_PORT=$SSH_PORT
 		
 		install_dependencies
 		create_dir
