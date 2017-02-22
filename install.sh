@@ -321,6 +321,7 @@ do
 		fi
 		echo ${HPID}
 		configure_new_ssh
+		FLAG_PORT=$(echo ${FLAG_PORT} | sed 's/[^0-9]*//g')
 		finalize_configurations ${FLAG_PORT}
 		IS_RUNNING=false
 		break
