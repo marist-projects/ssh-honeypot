@@ -284,7 +284,7 @@ do
 				ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to already bound port ${CHECKPORT}. Please try again.${RESET}\n"
 				UPLOAD_OK=false
 		    else
-		        ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${CHECKPORT}. Please try again.${RESET}\n"
+		        ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${FLAG_PORT}. Please try again.${RESET}\n"
 				UPLOAD_OK=false
 		    fi
 		fi
