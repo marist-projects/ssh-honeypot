@@ -72,17 +72,17 @@ function detect_os {
 
 # Detect the OS to prevent redundancy
 function install_dependencies {
-	if [[ $OS_DETECT == "Debian" ]]
+	if [[ ${OS_DETECT} == "Debian" ]]
 	then
 		echo "Installing Debian dependencies..."
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ $OS_DETECT == "Ubuntu" ]]
+	elif [[ ${OS_DETECT} == "Ubuntu" ]]
 	then
 		echo "Installing Ubuntu dependencies..."
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ $OS_DETECT == "CentOS" ]]
+	elif [[ ${OS_DETECT} == "CentOS" ]]
 	then
 		echo "Installing CentOS dependencies..."
 		yum update
@@ -238,7 +238,7 @@ do
 	
 	# Check if Syslog parameters are correct
 	# 	if they are then configure rsyslog
-	if [[ $SYSLOG_SERV ]]
+	if [[ ${SYSLOG_SERV} ]]
 	then 
 	
 		# Prompt for either UDP or TCP for Syslog
