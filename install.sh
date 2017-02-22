@@ -266,7 +266,7 @@ do
 	then
 		ERROR_MSG=${ERROR_MSG}"${RED}Please specify which ports the honeypot should be installed on. Please try again.${RESET}\n"
 		UPLOAD_OK=false
-	else if [[ "${FLAG_PORT}" -gt "65535" ]]
+	elif [[ "${FLAG_PORT}" -gt "65535" ]]
 	then
 	    ERROR_MSG=${ERROR_MSG}"${RED}Please specify a port below 65535. Please try again.${RESET}\n"
 		UPLOAD_OK=false
@@ -283,6 +283,7 @@ do
 			done
 		else
 			CHECKPORT=$(echo ${FLAG_PORT} | sed 's/[^0-9]*//g')
+			echo ${CURRENT_SSH_PORT}
 			if [[ "${CHECKPORT}" == "${CURRENT_SSH_PORT}" ]]
 			then
 				ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to already bound port ${CHECKPORT}. Please try again.${RESET}\n"
