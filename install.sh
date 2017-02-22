@@ -250,9 +250,9 @@ do
 		fi
 		
 		# Prompt for the maximum space for the system to store unsent log files 
-		echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
+		echo -n "Please specify the maximum number of GB to store for message queue[enter for 1GB]:"
 		read MAX_SPACE
-		if [[ -z $MAX_SPACE ]]
+		if [[ -z ${MAX_SPACE} ]]
 		then
 			MAX_SPACE="0"
 		fi
@@ -272,7 +272,7 @@ do
 			do
 				if [[ "${i}" == "${CURRENT_SSH_PORT}" ]]
 				then
-					ERROR_MSG=ERROR_MSG+"${RED}Cannot set Honeypot SSH daemone to already bound port${RESET}\n"
+					ERROR_MSG=ERROR_MSG+"${RED}Cannot set Honeypot SSH daemon to already bound port${RESET}\n"
 					UPLOAD_OK=false
 				fi
 			done
@@ -280,7 +280,7 @@ do
 			CHECKPORT=$(echo ${FLAG_PORT} | sed 's/[^0-9]*//g')
 			if [[ "${CHECKPORT}" == "${CURRENT_SSH_PORT}" ]]
 			then
-				ERROR_MSG=ERROR_MSG+"${RED}Cannot set Honeypot SSH daemone to already bound port${RESET}\n"
+				ERROR_MSG=ERROR_MSG+"${RED}Cannot set Honeypot SSH daemon to already bound port${RESET}\n"
 				UPLOAD_OK=false
 			fi
 		fi
