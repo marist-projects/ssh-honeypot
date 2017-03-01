@@ -62,9 +62,10 @@ function detect_os {
 	then
 		OS_DETECT="CentOS"
 		echo ${OS_DETECT}
-	elif [[ $(head -1 /etc/os-release) == *"Red Hat"*) ]]
+	elif [[ $(head -1 /etc/os-release) == *"Red Hat Enterprise Linux Server"* ]]
 	then
 		OS_DETECT="Red Hat"
+		echo ${OS_DETECT}
 	elif [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
 	then
 		OS_DETECT="Minibian"
@@ -85,6 +86,7 @@ function install_dependencies {
 		yum update
 		yum groupinstall "Development Tools"
 		yum install wget zlib zlib-devel openssl-devel libssh-devel -y
+		service firewalld stop
 	elif [[ ${OS_DETECT} == "Minibian" ]]
 	then
 		echo "Installing Minibian dependencies..."
@@ -147,6 +149,7 @@ function finalize_configurations {
 	echo "Ports:" > /usr/local/etc/active_ports.txt
 	if [[ $1 ]]
 	then
+		echo ${1}
 		if [[ $1 == *","* ]]
 		then
 			for i in $(echo $1 | sed "s/,/ /g")
@@ -274,22 +277,22 @@ do
 		then
 			for i in $(echo ${FLAG_PORT} | sed "s/,/ /g")
 			do
-				if [[ "${i}" == "${CURRENT_SSH_PORT}" ]]
+				if [[ "${i}" == "${SSH_PORT}" ]]
 				then
-					ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to already bound port ${i}. Please try again.${RESET}\n"
+					ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${i}. Please try again.${RESET}\n"
 					UPLOAD_OK=false
 				fi
 			done
 		else
 			CHECKPORT=$(echo ${FLAG_PORT} | sed 's/[^0-9]*//g')
 			echo ${CURRENT_SSH_PORT}
-			if [[ "${CHECKPORT}" == "${CURRENT_SSH_PORT}" ]]
+			if [[ "${CHECKPORT}" == "${SSH_PORT}" ]]
 			then
-				ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to already bound port ${CHECKPORT}. Please try again.${RESET}\n"
+				ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${CHECKPORT}. Please try again.${RESET}\n"
 				UPLOAD_OK=false
 		    else
 		        ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${FLAG_PORT}. Please try again.${RESET}\n"
-				UPLOAD_OK=false
+			UPLOAD_OK=false
 		    fi
 		fi
 	fi
@@ -325,7 +328,6 @@ do
 		fi
 		echo ${HPID}
 		configure_new_ssh
-		FLAG_PORT=$(echo ${FLAG_PORT} | sed 's/[^0-9]*//g')
 		finalize_configurations ${FLAG_PORT}
 		IS_RUNNING=false
 		break
