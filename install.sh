@@ -62,6 +62,9 @@ function detect_os {
 	then
 		OS_DETECT="CentOS"
 		echo ${OS_DETECT}
+	elif [[ $(head -1 /etc/os-release) == *"Red Hat"*) ]]
+	then
+		OS_DETECT="Red Hat"
 	elif [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
 	then
 		OS_DETECT="Minibian"
@@ -71,17 +74,12 @@ function detect_os {
 
 # Detect the OS to prevent redundancy
 function install_dependencies {
-	if [[ ${OS_DETECT} == "Debian" ]]
+	if [[ ${OS_DETECT} == "Debian" || ${OS_DETECT} == "Ubuntu" ]]
 	then
 		echo "Installing Debian dependencies..."
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ ${OS_DETECT} == "Ubuntu" ]]
-	then
-		echo "Installing Ubuntu dependencies..."
-		apt-get update
-		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ ${OS_DETECT} == "CentOS" ]]
+	elif [[ ${OS_DETECT} == "CentOS" || ${OS_DETECT} == "Red Hat" ]]
 	then
 		echo "Installing CentOS dependencies..."
 		yum update
@@ -308,7 +306,7 @@ do
 	then
 		echo -e ${ERROR_MSG}
 	else
-		if [[ ${OS_DETECT} == "CentOS" ]]
+		if [[ ${OS_DETECT} == "CentOS" || ${OS_DETECT} == "Red Hat" ]]
 		then 
 			service sshd restart
 		else 
