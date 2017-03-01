@@ -9,7 +9,7 @@
 ####################################### Global Variables ########################################
 
 STARTING_DIRECTORY=$(pwd)
-echo $STARTING_DIRECTORY
+echo ${STARTING_DIRECTORY}
 CURRENT_SSH_PORT=$(grep -Eo 'Port *[0-9]+' /etc/ssh/sshd_config | grep -o '[0-9]*')
 MOD_SSH_DIR=
 MOD_SSH_22_DIR=
@@ -18,6 +18,7 @@ IS_RUNNING=true
 LOG_DIR=
 SYSLOG_SERV=
 OS_DETECT=
+INSTALL_OK=true
 
 # ASCII Art Variables  
 RED='\e[0;31m'
@@ -52,41 +53,41 @@ function detect_os {
 	if [[ $(head -1 /etc/os-release) == *"Debian"* ]]
 	then
 		OS_DETECT="Debian"
-		echo $OS_DETECT
+		echo ${OS_DETECT}
 	elif [[ $(head -1 /etc/os-release) == *"Ubuntu"* ]]
 	then
 		OS_DETECT="Ubuntu"
-		echo $OS_DETECT
+		echo ${OS_DETECT}
 	elif [[ $(head -1 /etc/os-release) == *"CentOS"* ]]
 	then
 		OS_DETECT="CentOS"
-		echo $OS_DETECT
+		echo ${OS_DETECT}
+	elif [[ $(head -1 /etc/os-release) == *"Red Hat Enterprise Linux Server"* ]]
+	then
+		OS_DETECT="Red Hat"
+		echo ${OS_DETECT}
 	elif [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
 	then
 		OS_DETECT="Minibian"
-		echo $OS_DETECT
+		echo ${OS_DETECT}
 	fi
 }
 
 # Detect the OS to prevent redundancy
 function install_dependencies {
-	if [[ $OS_DETECT == "Debian" ]]
+	if [[ ${OS_DETECT} == "Debian" || ${OS_DETECT} == "Ubuntu" ]]
 	then
 		echo "Installing Debian dependencies..."
 		apt-get update
 		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ $OS_DETECT == "Ubuntu" ]]
-	then
-		echo "Installing Ubuntu dependencies..."
-		apt-get update
-		apt-get install wget make zlib1g-dev libssl-dev policycoreutils gcc -y
-	elif [[ $OS_DETECT == "CentOS" ]]
+	elif [[ ${OS_DETECT} == "CentOS" || ${OS_DETECT} == "Red Hat" ]]
 	then
 		echo "Installing CentOS dependencies..."
 		yum update
 		yum groupinstall "Development Tools"
 		yum install wget zlib zlib-devel openssl-devel libssh-devel -y
-	elif [[ $OS_DETECT == "Minibian" ]]
+		service firewalld stop
+	elif [[ ${OS_DETECT} == "Minibian" ]]
 	then
 		echo "Installing Minibian dependencies..."
 		apt-get update
@@ -148,6 +149,7 @@ function finalize_configurations {
 	echo "Ports:" > /usr/local/etc/active_ports.txt
 	if [[ $1 ]]
 	then
+		echo ${1}
 		if [[ $1 == *","* ]]
 		then
 			for i in $(echo $1 | sed "s/,/ /g")
@@ -158,16 +160,17 @@ function finalize_configurations {
 				echo -n "${i}," >> /usr/local/etc/active_ports.txt	
 			done
 		else
-			setup_configs $1
-			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}" >> /etc/rc.local
-			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${1}
-			echo -n "${1}," >> /usr/local/etc/active_ports.txt
+			TEMPPORT=$(echo $1 | sed 's/[^0-9]*//g')
+			setup_configs ${TEMPPORT}
+			echo "/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${TEMPPORT}" >> /etc/rc.local
+			/usr/local/sbin/sshd-new -f /usr/local/etc/sshd_config-${TEMPPORT}
+			echo -n "${TEMPPORT}," >> /usr/local/etc/active_ports.txt
 		fi
 	fi
 		
 	echo "exit 0" >> /etc/rc.local
 	chmod a+x /etc/rc.local
-	cd $STARTING_DIRECTORY
+	cd ${STARTING_DIRECTORY}
 }
 
 function setup_configs {
@@ -218,13 +221,14 @@ fi
 # Running the script 
 display_intro
 detect_os
-while [ $IS_RUNNING ]
+while [ ${IS_RUNNING} ]
 do
+    ERROR_MSG=
+
 	# Prompt for new SSH port + change chosen SSH port
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
 	read SSH_PORT
 	sed -i "0,/RE/s/.*Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
-	CURRENT_SSH_PORT=$SSH_PORT
 	
 	# Prompt for specific ports on which to install a fake SSH Daemon on
 	echo -n "Specify comma-separated ports to install the fake SSH Daemon on [EX: 22,2222,30]:"
@@ -234,51 +238,97 @@ do
 	echo -n "Please specify the ip that rsyslog should send logs to [press enter for none | format: 0.0.0.0:Port]:"
 	read SYSLOG_SERV
 	
-	if [[ $SYSLOG_SERV ]]
+	# Check if Syslog parameters are correct
+	# 	if they are then configure rsyslog
+	if [[ ${SYSLOG_SERV} ]]
 	then 
 	
 		# Prompt for either UDP or TCP for Syslog
 		echo -n "Which protocol would you like to use for SYSLOG (UDP or TCP):"
 		read PROTO
-		if [[ -z $PROTO ]]
+		if [[ -z ${PROTO} ]]
 		then
 			PROTO="TCP"
 		fi
 		
 		# Prompt for the maximum space for the system to store unsent log files 
-		echo -n "Please specifiy the maximum number of GB to store for message queue[enter for 1GB]:"
+		echo -n "Please specify the maximum number of GB to store for message queue[enter for 1GB]:"
 		read MAX_SPACE
-		if [[ -z $MAX_SPACE ]]
+		if [[ -z ${MAX_SPACE} ]]
 		then
 			MAX_SPACE="0"
 		fi
-		configure_rsyslog $SYSLOG_SERV $MAX_SPACE $PROTO
+		configure_rsyslog ${SYSLOG_SERV} ${MAX_SPACE} ${PROTO}
 			
 	fi
 	
-	if [[ -z $FLAG_PORT ]]
+	# Error Checking
+	#   Making sure parameters
+	if [[ -z ${FLAG_PORT} ]]
 	then
-		echo -e "${RED}Please provide sufficient parameters${RESET}"
+		ERROR_MSG=${ERROR_MSG}"${RED}Please specify which ports the honeypot should be installed on. Please try again.${RESET}\n"
+		UPLOAD_OK=false
+	elif [[ ${FLAG_PORT} -gt "65535" ]]
+	then
+	    ERROR_MSG=${ERROR_MSG}"${RED}Please specify a port below 65535. Please try again.${RESET}\n"
+		UPLOAD_OK=false
 	else
-		if [[ $OS_DETECT == "CentOS" ]]
+		if [[ ${FLAG_PORT} == *","* ]]
+		then
+			for i in $(echo ${FLAG_PORT} | sed "s/,/ /g")
+			do
+				if [[ "${i}" == "${SSH_PORT}" ]]
+				then
+					ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${i}. Please try again.${RESET}\n"
+					UPLOAD_OK=false
+				fi
+			done
+		else
+			CHECKPORT=$(echo ${FLAG_PORT} | sed 's/[^0-9]*//g')
+			echo ${CURRENT_SSH_PORT}
+			if [[ "${CHECKPORT}" == "${SSH_PORT}" ]]
+			then
+				ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${CHECKPORT}. Please try again.${RESET}\n"
+				UPLOAD_OK=false
+		    else
+		        ERROR_MSG=${ERROR_MSG}"${RED}Cannot set Honeypot SSH daemon to port ${FLAG_PORT}. Please try again.${RESET}\n"
+			UPLOAD_OK=false
+		    fi
+		fi
+	fi
+	
+	if [[ -z ${OS_DETECT} ]]
+	then
+		ERROR_MSG=ERROR_MSG + "${RED}OS not detected${RESET}\n"
+		UPLOAD_OK=false
+	fi
+	# End Error Checking
+	
+	# If everything OK run install for Honeypot SSH Daemon
+	if [[ "${UPLOAD_OK}" = false ]]
+	then
+		echo -e ${ERROR_MSG}
+	else
+		if [[ ${OS_DETECT} == "CentOS" || ${OS_DETECT} == "Red Hat" ]]
 		then 
 			service sshd restart
 		else 
 			service ssh restart
 		fi
+		CURRENT_SSH_PORT=${SSH_PORT}
 		
 		install_dependencies
 		create_dir
 		
 		CHECK_ID=$(grep -oP "HPID=.*" /etc/environment | sed 's/HPID=//g')
-		if [[ -z $CHECK_ID ]]
+		if [[ -z ${CHECK_ID} ]]
 		then 
 			export HPID=$(dbus-uuidgen)
 			echo "HPID=${HPID}" >> /etc/environment
 		fi
-		echo $HPID
+		echo ${HPID}
 		configure_new_ssh
-		finalize_configurations $FLAG_PORT
+		finalize_configurations ${FLAG_PORT}
 		IS_RUNNING=false
 		break
 	fi
