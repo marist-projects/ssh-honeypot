@@ -39,14 +39,13 @@ done
 echo "Restarting Rsyslog....."
 service rsyslog restart
 
-if [[ $(head -1 /etc/os-release) == *"Debian"* ]] || [[ $(head -1 /etc/os-release) == *"Ubuntu"* ]] || [[ $(head -1 /etc/os-release) == *"Raspbian"* ]]
-then
-	echo "Restarting SSH....."
-	service ssh restart
-elif [[ $(head -1 /etc/os-release) == *"CentOS"* ]]
+if [[ $(head -1 /etc/os-release) == *"CentOS"* || $(head -1 /etc/os-release) == *"CentOS"* ]]
 then
 	echo "Restarting SSH....."
 	service sshd restart
+else
+	echo "Restarting SSH....."
+	service ssh restart
 fi
 
 echo "#!/bin/sh -e" > /etc/rc.local
