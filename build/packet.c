@@ -1923,7 +1923,7 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, u_int32_t *seqnr_p)
 				do_log2(ssh->state->server_side &&
 				    reason == SSH2_DISCONNECT_BY_APPLICATION ?
 				    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_ERROR,
-				    "Received [HPID: %s] disconnect from %s port %d:"
+				    "Received disconnect from %s port %d:"
                     "%u: %.400s""; for HPID: %s", ssh_remote_ipaddr(ssh),
 				    ssh_remote_port(ssh), reason, msg, getenv("HPID"));
 				free(msg);
