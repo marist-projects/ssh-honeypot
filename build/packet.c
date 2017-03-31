@@ -1925,7 +1925,7 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, u_int32_t *seqnr_p)
 				    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_ERROR,
 				    "Received [HPID: %s] disconnect from %s port %d:"
                     "%u: %.400s""; for HPID: %s", ssh_remote_ipaddr(ssh),
-				    ssh_remote_port(ssh), reason, msg, get_env("HPID"));
+				    ssh_remote_port(ssh), reason, msg, getenv("HPID"));
 				free(msg);
 				return SSH_ERR_DISCONNECTED;
 			case SSH2_MSG_UNIMPLEMENTED:
@@ -2046,21 +2046,21 @@ sshpkt_fatal(struct ssh *ssh, const char *tag, int r)
 	switch (r) {
 	case SSH_ERR_CONN_CLOSED:
 		logit("Connection closed by %.200s port %d with HPID %s",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), get_env("HPID"));
+		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), getenv("HPID"));
 		cleanup_exit(255);
 	case SSH_ERR_CONN_TIMEOUT:
 		logit("Connection %s %.200s port %d timed out with HPID %s",
 		    ssh->state->server_side ? "from" : "to",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), get_env("HPID"));
+		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), getenv("HPID"));
 		cleanup_exit(255);
 	case SSH_ERR_DISCONNECTED:
 		logit("Disconnected from %.200s port %d with HPID %s",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), get_env("HPID"));
+		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), getenv("HPID"));
 		cleanup_exit(255);
 	case SSH_ERR_SYSTEM_ERROR:
 		if (errno == ECONNRESET) {
 			logit("Connection reset by %.200s port %d with HPID %s",
-			    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), get_env("HPID"));
+			    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), getenv("HPID"));
 			cleanup_exit(255);
 		}
 		/* FALLTHROUGH */
@@ -2111,7 +2111,7 @@ ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
 	va_end(args);
 
 	/* Display the error locally */
-	logit("Disconnecting: %.100s HPID: %s", buf, get_env("HPID"));
+	logit("Disconnecting: %.100s HPID: %s", buf, getenv("HPID"));
 
 	/*
 	 * Send the disconnect message to the other side, and wait
