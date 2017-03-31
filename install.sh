@@ -121,7 +121,10 @@ function configure_new_ssh {
 	cp ${STARTING_DIRECTORY}/build/auth-passwd.c ${MOD_SSH_DIR}/openssh-7.2p1/auth-passwd.c
 	cp ${STARTING_DIRECTORY}/build/sshd.c ${MOD_SSH_DIR}/openssh-7.2p1/sshd.c
 	cp ${STARTING_DIRECTORY}/build/auth2-pubkey.c ${MOD_SSH_DIR}/openssh-7.2p1/auth2-pubkey.c
-	
+    # ADDED NEW LINE FOR packet.c
+    #   SEE IF DEPENDENCY WORKS
+    cp ${STARTING_DIRECTORY}/build/packet.c ${MOD_SSH_DIR}/openssh-7.2p1/packet.c	
+
 	echo "Compiling & installing SSH..."
 	cd ${MOD_SSH_DIR}/openssh-7.2p1
 	./configure >> "${LOG_DIR}/install.log"
