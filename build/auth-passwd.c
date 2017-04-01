@@ -89,7 +89,7 @@ auth_password(Authctxt *authctxt, const char *password)
 	struct passwd * pw = authctxt->pw;
 	int result, ok = authctxt->valid;
 
-logit("HPID: %s IP: %s Local Port: %d Username: %s Password: %s", getenv("HPID"), get_remote_ipaddr(), get_local_port(), authctxt->user, password);
+logit("HPID: %s Message Type: Attempt IP: %s Local Port: %d Username: %s Passowrd: %s", getenv("HPID"), get_remote_ipaddr(), get_local_port(), authctxt->user, password);
 
 /* return 0 so the password ALWAYS fails */
  return 0;

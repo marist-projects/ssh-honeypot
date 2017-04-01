@@ -486,8 +486,8 @@ sshd_exchange_identification(int sock_in, int sock_out)
 	debug("Client protocol version %d.%d; client software version %.100s",
 	    remote_major, remote_minor, remote_version);
 
-	logit("Attack From: %s; HPID: %s; Client protocol version %d.%d; client software version %.100s; Remote port: %d; Local port: %d;",
-		get_remote_ipaddr(), getenv("HPID"), remote_major, remote_minor, remote_version, get_remote_port(), get_local_port());
+	logit("HPID: %s Message Type: Connection IP: %s Local port: %d Remote Port: %d Client Protocol Version: %d.%d Client Software Version %.100s",
+		getenv("HPID"), get_remote_ipaddr(), get_local_port(), get_remote_port(), remote_major, remote_minor, remote_version);
 
 
 
