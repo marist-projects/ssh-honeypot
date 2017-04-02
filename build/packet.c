@@ -2054,7 +2054,7 @@ sshpkt_fatal(struct ssh *ssh, const char *tag, int r)
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		cleanup_exit(255);
 	case SSH_ERR_DISCONNECTED:
-		logit("HPID: %s Message Type: Disconnect Message: Disconnected from %.200s port %d
+		logit("HPID: %s Message Type: Disconnect Message: Disconnected from %.200s port %d",
 		    getenv("HPID"), ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		cleanup_exit(255);
 	case SSH_ERR_SYSTEM_ERROR:
