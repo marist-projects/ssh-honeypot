@@ -2059,7 +2059,7 @@ sshpkt_fatal(struct ssh *ssh, const char *tag, int r)
 		cleanup_exit(255);
 	case SSH_ERR_SYSTEM_ERROR:
 		if (errno == ECONNRESET) {
-			logit("HPID: %s Message Type: Disconnect Message: Connection reset by %.200s port %d with HPID %s",
+			logit("HPID: %s Message Type: Disconnect Message: Connection reset by %.200s port %d",
 			    getenv("HPID"), ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 			cleanup_exit(255);
 		}
