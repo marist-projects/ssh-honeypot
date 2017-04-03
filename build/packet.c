@@ -2049,9 +2049,9 @@ sshpkt_fatal(struct ssh *ssh, const char *tag, int r)
 		    getenv("HPID"), ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		cleanup_exit(255);
 	case SSH_ERR_CONN_TIMEOUT:
-		logit("HPID: %s Message Type: Disconnect IP: %.200s Remote Port: %d Reason: Timed Out",
-		    getenv("HPID"), ssh->state->server_side ? "from" : "to",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
+		logit("HPID: %s Message Type: Disconnect IP: %.200s Remote Port: %d Reason: Connection %s IP timed out",
+		    getenv("HPID"),ssh_remote_ipaddr(ssh), 
+			ssh_remote_port(ssh), ssh->state->server_side ? "from" : "to");
 		cleanup_exit(255);
 	case SSH_ERR_DISCONNECTED:
 		logit("HPID: %s Message Type: Disconnect IP: %.200s Remote Port: %d Reason: Disconnected",
