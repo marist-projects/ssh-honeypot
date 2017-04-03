@@ -2045,21 +2045,21 @@ sshpkt_fatal(struct ssh *ssh, const char *tag, int r)
 {
 	switch (r) {
 	case SSH_ERR_CONN_CLOSED:
-		logit("HPID: %s Message Type: Disconnect Message: Connection closed by %.200s port %d",
+		logit("HPID: %s Message Type: Disconnect IP: %.200s Remote Port: %d Reason: Connection Closed",
 		    getenv("HPID"), ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		cleanup_exit(255);
 	case SSH_ERR_CONN_TIMEOUT:
-		logit("HPID: %s Message Type: Disconnect Message: Connection %s %.200s port %d timed out",
+		logit("HPID: %s Message Type: Disconnect IP: %.200s Remote Port: %d Reason: Timed Out",
 		    getenv("HPID"), ssh->state->server_side ? "from" : "to",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		cleanup_exit(255);
 	case SSH_ERR_DISCONNECTED:
-		logit("HPID: %s Message Type: Disconnect Message: Disconnected from %.200s port %d",
+		logit("HPID: %s Message Type: Disconnect IP: %.200s Remote Port: %d Reason: Disconnected",
 		    getenv("HPID"), ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		cleanup_exit(255);
 	case SSH_ERR_SYSTEM_ERROR:
 		if (errno == ECONNRESET) {
-			logit("HPID: %s Message Type: Disconnect Message: Connection reset by %.200s port %d",
+			logit("HPID: %s Message Type: Disconnect IP: %.200s Remote Port: %d Reason: Connection Reset",
 			    getenv("HPID"), ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 			cleanup_exit(255);
 		}
@@ -2111,7 +2111,7 @@ ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
 	va_end(args);
 
 	/* Display the error locally */
-	logit("HPID: %s Message Type: Disconnect Message: IP: %s Message: Disconnecting: %.100s", getenv("HPID"), ssh_remote_ipaddr(ssh), buf);
+	logit("HPID: %s Message Type: Disconnect IP: %s Remote Port: %d Reason: %.100s", getenv("HPID"), ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), buf); 
 
 	/*
 	 * Send the disconnect message to the other side, and wait
