@@ -39,7 +39,7 @@ done
 echo "Restarting Rsyslog....."
 service rsyslog restart
 
-if [[ $(head -1 /etc/os-release) == *"CentOS"* || $(head -1 /etc/os-release) == *"CentOS"* ]]
+if [[ $(head -1 /etc/os-release) == *"CentOS"* || $(head -1 /etc/os-release) == *"Red Hat"* ]]
 then
 	echo "Restarting SSH....."
 	service sshd restart
