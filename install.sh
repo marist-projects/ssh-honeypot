@@ -85,7 +85,7 @@ function install_dependencies {
 		echo "Installing CentOS dependencies..."
 		yum update
 		yum groupinstall "Development Tools"
-		yum install wget zlib zlib-devel openssl-devel libssh-devel -y
+		yum install wget zlib zlib-devel openssl-devel -y
 		service firewalld stop
 	elif [[ ${OS_DETECT} == "Minibian" ]]
 	then
