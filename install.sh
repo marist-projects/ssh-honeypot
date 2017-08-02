@@ -231,7 +231,16 @@ do
 	# Prompt for new SSH port + change chosen SSH port
 	echo -n "Please specify the port that SSH should be changed to (we recommend 48000-65535):"
 	read SSH_PORT
-	sed -i "0,/RE/s/.*Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
+	if [[ ${OS_DETECT} == "CentOS" || ${OS_DETECT} == "Red Hat" ]]
+        then
+                echo "Stopping SSH Daemon..."
+                service sshd stop
+        else
+                echo "Stopping SSH Daemon..."
+                service ssh stop
+        fi
+        sed -i "0,/RE/s/.*Port .*/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
+
 	
 	# Prompt for specific ports on which to install a fake SSH Daemon on
 	echo -n "Specify comma-separated ports to install the fake SSH Daemon on [EX: 22,2222,30]:"
@@ -313,11 +322,13 @@ do
 		echo -e ${ERROR_MSG}
 	else
 		if [[ ${OS_DETECT} == "CentOS" || ${OS_DETECT} == "Red Hat" ]]
-		then 
-			service sshd restart
-		else 
-			service ssh restart
-		fi
+                then
+                        echo "Starting SSH Daemon..."
+                        service sshd start
+                else
+                        echo "Starting SSH Daemon..."
+                        service ssh start
+                fi
 		CURRENT_SSH_PORT=${SSH_PORT}
 		
 		install_dependencies
