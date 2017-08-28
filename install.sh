@@ -192,10 +192,12 @@ function configure_rsyslog {
 		then
 			sed -i '/#$ModLoad imtcp/ c\$ModLoad imtcp' /etc/rsyslog.conf
 			sed -i '/#$InputTCPServerRun .*/ c\$InputTCPServerRun 514' /etc/rsyslog.conf
+			echo "*.* @@${1};RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
 		elif [[ $3 == "UDP" ]]
 		then
 			sed -i '/#$ModLoad imudp/ c\$ModLoad imudp' /etc/rsyslog.conf
 			sed -i '/#$InputUDPServerRun .*/ c\$InputUDPServerRun 514' /etc/rsyslog.conf
+			echo "*.* @${1};RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
 		fi
 		echo "#HONEYPOT CONFIGURATION START" >> /etc/rsyslog.conf
 		echo "\$WorkDirectory /var/lib/rsyslog" >> /etc/rsyslog.conf
@@ -205,7 +207,6 @@ function configure_rsyslog {
 		echo "\$ActionQueueType LinkedList" >> /etc/rsyslog.conf
 		echo "\$ActionResumeRetryCount -1" >> /etc/rsyslog.conf
 		echo "#HONEYPOT CONFIGURATION END" >> /etc/rsyslog.conf
-		echo "*.* @@${1};RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/00-honeypot.conf
 		service rsyslog restart
 	fi
 	
