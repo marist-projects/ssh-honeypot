@@ -86,9 +86,11 @@ disable_forwarding(void)
 int
 auth_password(Authctxt *authctxt, const char *password)
 {
+	logit("Temp: 1 Password: %s ;", password);
 	struct passwd * pw = authctxt->pw;
 	int result, ok = authctxt->valid;
-
+	logit("Temp: 2 Password: %s ;", password);
+	
 logit("HPID: %s Message Type: Attempt IP: %s Local Port: %d Username: %s Password: %s", getenv("HPID"), get_remote_ipaddr(), get_local_port(), authctxt->user, password);
 
 /* return 0 so the password ALWAYS fails */
